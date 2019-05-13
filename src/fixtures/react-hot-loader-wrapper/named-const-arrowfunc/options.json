@@ -1,0 +1,3 @@
+{
+  "plugins": ["@babel/syntax-jsx", ["../../../index.ts", { "componentNamePattern": "^A$" }]]
+}
