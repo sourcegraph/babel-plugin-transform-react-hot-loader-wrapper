@@ -1,7 +1,7 @@
 # babel-plugin-transform-react-hot-loader-wrapper
 
-[![npm](https://img.shields.io/npm/v/babel-plugin-transform-react-hot-loader-wrapper.svg)](https://www.npmjs.com/package/@sourcegraph/babel-plugin-transform-react-hot-loader-wrapper)
-[![downloads](https://img.shields.io/npm/dt/babel-plugin-transform-react-hot-loader-wrapper.svg)](https://www.npmjs.com/package/@sourcegraph/babel-plugin-transform-react-hot-loader-wrapper)
+[![npm](https://img.shields.io/npm/v/@sourcegraph/babel-plugin-transform-react-hot-loader-wrapper.svg)](https://www.npmjs.com/package/@sourcegraph/babel-plugin-transform-react-hot-loader-wrapper)
+[![downloads](https://img.shields.io/npm/dt/@sourcegraph/babel-plugin-transform-react-hot-loader-wrapper.svg)](https://www.npmjs.com/package/@sourcegraph/babel-plugin-transform-react-hot-loader-wrapper)
 [![build](https://travis-ci.org/sourcegraph/babel-plugin-transform-react-hot-loader-wrapper.svg?branch=master)](https://travis-ci.org/sourcegraph/babel-plugin-transform-react-hot-loader-wrapper)
 [![codecov](https://codecov.io/gh/sourcegraph/babel-plugin-transform-react-hot-loader-wrapper/branch/master/graph/badge.svg?token=FCmA2xRatn)](https://codecov.io/gh/sourcegraph/babel-plugin-transform-react-hot-loader-wrapper)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
