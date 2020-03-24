@@ -57,7 +57,7 @@
     "@commitlint/cli": "^8.3.5",
     "@commitlint/config-conventional": "^8.3.4",
     "@sourcegraph/prettierrc": "^2.2.0",
-    "@sourcegraph/tsconfig": "^4.0.0",
+    "@sourcegraph/tsconfig": "^4.0.1",
     "@sourcegraph/tslint-config": "^13.4.0",
     "@types/babel__core": "7.1.6",
     "@types/babel__traverse": "7.0.9",
