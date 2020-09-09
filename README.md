@@ -29,9 +29,9 @@ export const A = hot(() => <p>a</p>)
 ## Usage
 
 ```
-npm install --save-dev babel-plugin-transform-react-hot-loader-wrapper
+npm install --save-dev @sourcegraph/babel-plugin-transform-react-hot-loader-wrapper
 # or
-yarn add --dev babel-plugin-transform-react-hot-loader-wrapper
+yarn add --dev @sourcegraph/babel-plugin-transform-react-hot-loader-wrapper
 ```
 
 Then add this to your Babel configuration file (`.babelrc` or `babel.config.js`):
@@ -40,7 +40,7 @@ Then add this to your Babel configuration file (`.babelrc` or `babel.config.js`)
 {
   "plugins": [
     [
-      "babel-plugin-transform-react-hot-loader-wrapper",
+      "@sourcegraph/babel-plugin-transform-react-hot-loader-wrapper",
       {
         "modulePattern": "src/.*Page\\.tsx$",
         "componentNamePattern": "Page$"
