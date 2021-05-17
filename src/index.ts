@@ -98,6 +98,16 @@ const plugin = declare<Options, PluginObj<State>>(({ assertVersion, types }) => 
                 modulePattern = new RegExp(modulePattern)
             }
 
+            let { componentNamePattern } = state.opts as Options
+            if (typeof componentNamePattern !== 'string' && !(componentNamePattern instanceof RegExp)) {
+                throw new TypeError(
+                    ".componentNamePattern must be a string or RegExp (to match the exported names that should be wrapped with react-hot-loader/root's `hot` function)."
+                )
+            }
+            if (typeof componentNamePattern === 'string') {
+                componentNamePattern = new RegExp(componentNamePattern)
+            }
+
             // Test if file is covered by modulePattern.
             if (
                 state.file.opts.filename === null ||
@@ -115,16 +125,6 @@ const plugin = declare<Options, PluginObj<State>>(({ assertVersion, types }) => 
             for (const path of exportNamedDeclarations) {
                 if (!path.node.declaration) {
                     return
-                }
-
-                let { componentNamePattern } = state.opts as Options
-                if (typeof componentNamePattern !== 'string' && !(componentNamePattern instanceof RegExp)) {
-                    throw new TypeError(
-                        ".componentNamePattern must be a string or RegExp (to match the exported names that should be wrapped with react-hot-loader/root's `hot` function)."
-                    )
-                }
-                if (typeof componentNamePattern === 'string') {
-                    componentNamePattern = new RegExp(componentNamePattern)
                 }
 
                 const declaration = getWrappedDeclaration(path, path.node.declaration, state, componentNamePattern)
