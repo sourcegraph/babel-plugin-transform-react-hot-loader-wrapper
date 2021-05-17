@@ -18,3 +18,5 @@ jobs:
         run: yarn prettier-check
       - name: Run eslint
         run: yarn eslint
+      - name: Run tests
+        run: yarn test
