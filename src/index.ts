@@ -1,35 +1,33 @@
-import { types as t } from '@babel/core'
+import { types as t, PluginObj, PluginPass } from '@babel/core'
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { addNamed } from '@babel/helper-module-imports'
-import { NodePath, Visitor } from '@babel/traverse'
-import { Declaration, Expression, Identifier } from '@babel/types'
+import { declare } from '@babel/helper-plugin-utils'
+
+import type { NodePath, Visitor } from '@babel/traverse'
+import type { Declaration, Expression, Identifier } from '@babel/types'
 
 interface Options {
-    componentNamePattern: string | RegExp
-    modulePattern: string | RegExp
+    componentNamePattern?: string | RegExp
+    modulePattern?: string | RegExp
 }
 
-interface State {
-    opts: Options
-
-    file: {
-        opts: {
-            filename: string | null
-        }
-    }
-
+interface State extends PluginPass {
     /** To avoid adding multiple imports in the same file. */
     hotIdentifier?: Identifier
 }
 
-export default ({ types }: { types: typeof t }) => {
-    const getHotIdentifier = (path: NodePath, state: State): Identifier => {
-        const hotIdentifier: Identifier = state.hotIdentifier || addNamed(path, 'hot', 'react-hot-loader/root')
-        state.hotIdentifier = hotIdentifier
-        return hotIdentifier
+const plugin = declare<Options, PluginObj<State>>(({ assertVersion, types }) => {
+    assertVersion(7)
+
+    const getHotIdentifier = (types: typeof t, path: NodePath, state: State): Identifier => {
+        if (!state.hotIdentifier) {
+            state.hotIdentifier = addNamed(path, 'hot', 'react-hot-loader/root')
+        }
+        return types.cloneNode(state.hotIdentifier!, true)
     }
 
-    const getComponentExpr = (node: Declaration): { name: string; expr: Expression } | null => {
+    const getComponentExpression = (node: Declaration): { name: string; expr: Expression } | null => {
         if (t.isVariableDeclaration(node)) {
             if (node.declarations.length !== 1) {
                 return null
@@ -41,28 +39,26 @@ export default ({ types }: { types: typeof t }) => {
             if (!t.isArrowFunctionExpression(decl.init)) {
                 return null
             }
-            return { name: decl.id.name, expr: decl.init }
+            return { name: decl.id.name, expr: t.cloneNode(decl.init) }
         }
         if (t.isClassDeclaration(node)) {
             if (!node.id) {
                 return null
             }
-            const expr: t.ClassExpression = t.clone<any>(node)
-            expr.type = 'ClassExpression'
+            const expression = t.classExpression(node.id, node.superClass, node.body, node.decorators)
             return {
                 name: node.id.name,
-                expr,
+                expr: expression,
             }
         }
         if (t.isFunctionDeclaration(node)) {
             if (!node.id) {
                 return null
             }
-            const expr: t.FunctionExpression = t.clone<any>(node)
-            expr.type = 'FunctionExpression'
+            const expression = t.functionExpression(node.id, node.params, node.body, node.generator, node.async)
             return {
                 name: node.id.name,
-                expr,
+                expr: expression,
             }
         }
         return null
@@ -74,26 +70,27 @@ export default ({ types }: { types: typeof t }) => {
         state: State,
         componentNamePattern: RegExp
     ): Declaration | null => {
-        const component = getComponentExpr(node)
+        const component = getComponentExpression(node)
         if (!component) {
             return null
         }
         if (!componentNamePattern.test(component.name)) {
             return null
         }
+        const hotIdentifier = getHotIdentifier(t, path, state)
         return t.variableDeclaration('const', [
             t.variableDeclarator(
                 types.identifier(component.name),
-                types.callExpression(getHotIdentifier(path, state), [component.expr])
+                types.callExpression(hotIdentifier, [component.expr])
             ),
         ])
     }
 
     const visitor: Visitor<State> = {
         Program: (path, state) => {
-            let { modulePattern } = state.opts
+            let { modulePattern } = state.opts as Options
             if (typeof modulePattern !== 'string' && !(modulePattern instanceof RegExp)) {
-                throw new Error(
+                throw new TypeError(
                     '.modulePattern must be a string or RegExp (to match the paths of modules that should be processed).'
                 )
             }
@@ -101,33 +98,40 @@ export default ({ types }: { types: typeof t }) => {
                 modulePattern = new RegExp(modulePattern)
             }
 
-            if (state.file.opts.filename === null || !modulePattern.test(state.file.opts.filename)) {
+            let { componentNamePattern } = state.opts as Options
+            if (typeof componentNamePattern !== 'string' && !(componentNamePattern instanceof RegExp)) {
+                throw new TypeError(
+                    ".componentNamePattern must be a string or RegExp (to match the exported names that should be wrapped with react-hot-loader/root's `hot` function)."
+                )
+            }
+            if (typeof componentNamePattern === 'string') {
+                componentNamePattern = new RegExp(componentNamePattern)
+            }
+
+            // Test if file is covered by modulePattern.
+            if (
+                state.file.opts.filename === null ||
+                state.file.opts.filename === undefined ||
+                !modulePattern.test(state.file.opts.filename)
+            ) {
                 return
             }
 
-            path.traverse(
-                {
-                    ExportNamedDeclaration: (path, state) => {
-                        let { componentNamePattern } = state.opts
-                        if (typeof componentNamePattern !== 'string' && !(componentNamePattern instanceof RegExp)) {
-                            throw new Error(
-                                ".componentNamePattern must be a string or RegExp (to match the exported names that should be wrapped with react-hot-loader/root's `hot` function)."
-                            )
-                        }
-                        if (typeof componentNamePattern === 'string') {
-                            componentNamePattern = new RegExp(componentNamePattern)
-                        }
+            const body = path.get('body')
 
-                        if (path.node.declaration) {
-                            const d = getWrappedDeclaration(path, path.node.declaration, state, componentNamePattern)
-                            if (d) {
-                                path.replaceWith(t.exportNamedDeclaration(d, []))
-                            }
-                        }
-                    },
-                },
-                state
+            const exportNamedDeclarations = body.filter((node): node is NodePath<t.ExportNamedDeclaration> =>
+                t.isExportNamedDeclaration(node)
             )
+            for (const path of exportNamedDeclarations) {
+                if (!path.node.declaration) {
+                    return
+                }
+
+                const declaration = getWrappedDeclaration(path, path.node.declaration, state, componentNamePattern)
+                if (declaration) {
+                    path.replaceWith(t.exportNamedDeclaration(declaration))
+                }
+            }
         },
     }
 
@@ -135,4 +139,8 @@ export default ({ types }: { types: typeof t }) => {
         name: '@sourcegraph/babel-plugin-transform-react-hot-loader-wrapper',
         visitor,
     }
-}
+})
+
+// babel expects plugins to have a default export.
+// eslint-disable-next-line import/no-default-export
+export default plugin
