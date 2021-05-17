@@ -2,7 +2,7 @@ import pluginTester from 'babel-plugin-tester'
 
 import plugin from '.'
 
-const IMPORTS = 'import { hot as _hot } from \'react-hot-loader/root\'\n'
+const IMPORTS = "import { hot as _hot } from 'react-hot-loader/root'\n"
 
 pluginTester({
     plugin,
@@ -11,7 +11,7 @@ pluginTester({
     tests: [
         {
             title: 'const arrowfunc',
-            code: 'export const A = () => \'a\'',
+            code: "export const A = () => 'a'",
             output: `${IMPORTS}export const A = _hot(() => 'a')`,
             pluginOptions: { modulePattern: 'Page\\.tsx?', componentNamePattern: '^A$' },
         },
@@ -23,25 +23,25 @@ pluginTester({
         },
         {
             title: 'function',
-            code: 'export function A(props) { return \'a\'; }',
+            code: "export function A(props) { return 'a'; }",
             output: `${IMPORTS}export const A = _hot(function A(props) {\n    return 'a'\n})`,
             pluginOptions: { modulePattern: 'Page\\.tsx?', componentNamePattern: '^A$' },
         },
         {
             title: 'ignored by componentNamePattern',
-            code: 'export const X = () => \'a\'',
-            output: 'export const X = () => \'a\'',
+            code: "export const X = () => 'a'",
+            output: "export const X = () => 'a'",
             pluginOptions: { modulePattern: 'Page\\.tsx?', componentNamePattern: '^A$' },
         },
         {
             title: 'ignored by modulePattern',
-            code: 'export const A = () => \'a\'',
-            output: 'export const A = () => \'a\'',
+            code: "export const A = () => 'a'",
+            output: "export const A = () => 'a'",
             pluginOptions: { modulePattern: 'Area\\.tsx?', componentNamePattern: '^A$' },
         },
         {
             title: 'multiple in same file',
-            code: 'export const A = () => \'a\'; export const B = () => \'b\'',
+            code: "export const A = () => 'a'; export const B = () => 'b'",
             output: `${IMPORTS}export const A = _hot(() => 'a')\nexport const B = _hot(() => 'b')`,
             pluginOptions: { modulePattern: 'Page\\.tsx?', componentNamePattern: '' },
         },
