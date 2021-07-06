@@ -61,7 +61,7 @@
     "@sourcegraph/prettierrc": "^3.0.3",
     "@sourcegraph/tsconfig": "^4.0.1",
     "@types/babel-plugin-tester": "9.0.3",
-    "@types/babel__core": "7.1.14",
+    "@types/babel__core": "7.1.15",
     "@types/babel__helper-plugin-utils": "7.10.0",
     "@types/babel__traverse": "7.14.1",
     "@types/jest": "26.0.23",
