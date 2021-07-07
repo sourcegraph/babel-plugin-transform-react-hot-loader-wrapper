@@ -1764,10 +1764,10 @@
   resolved "https://registry.yarnpkg.com/@types/aria-query/-/aria-query-4.2.1.tgz#78b5433344e2f92e8b306c06a5622c50c245bf6b"
   integrity sha512-S6oPal772qJZHoRZLFc/XoZW2gFvwXusYUmXPXkgxJLuEk2vOt7jc4Yo6z/vtI0EBkbPBVrJJ0B+prLIKiWqHg==
 
-"@types/babel-plugin-tester@9.0.3", "@types/babel-plugin-tester@^9.0.0":
-  version "9.0.3"
-  resolved "https://registry.yarnpkg.com/@types/babel-plugin-tester/-/babel-plugin-tester-9.0.3.tgz#cc6ad6f18a0199441313fce48d09b45a05a407f8"
-  integrity sha512-qw+Km6cLPF50NtFII2MR/MNi7UA3ojaO9hxvktJv9txvsp24nWXG2m8Ij1Ijf93j+sY/9oVpFY+7Z9BI4ZS8qA==
+"@types/babel-plugin-tester@9.0.4", "@types/babel-plugin-tester@^9.0.0":
+  version "9.0.4"
+  resolved "https://registry.yarnpkg.com/@types/babel-plugin-tester/-/babel-plugin-tester-9.0.4.tgz#f5f9274149c6c789984f69ae4edbc383e33f679c"
+  integrity sha512-s7SxUNtUWO/bWZZqJbFqY/tbqJFoYnW/M2zPkTHl406PAPoWVSaVyYElo/O3GcRAQ5CV/pLPTFV4tQYTpMDWEQ==
   dependencies:
     "@types/babel__core" "*"
     "@types/prettier" "*"
