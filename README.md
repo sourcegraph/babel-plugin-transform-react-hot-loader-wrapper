@@ -1,3 +1,7 @@
+# Warning
+
+This repository is archived because of the migration to [react-refresh-webpack-plugin](react-refresh-webpack-plugin). See more details in [the PR](https://github.com/sourcegraph/sourcegraph/pull/22580).
+
 # babel-plugin-transform-react-hot-loader-wrapper
 
 [![npm](https://img.shields.io/npm/v/@sourcegraph/babel-plugin-transform-react-hot-loader-wrapper.svg)](https://www.npmjs.com/package/@sourcegraph/babel-plugin-transform-react-hot-loader-wrapper)
